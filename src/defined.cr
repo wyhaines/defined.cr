@@ -1,5 +1,5 @@
 module Defined
-  VERSION = "0.1.0"
+  VERSION = "0.1.1"
 end
 
 # This macro accepts a string or a symbol of a fully qualified constant name.
@@ -10,8 +10,8 @@ macro defined?(const)
   {%
     parts = [] of String
     position = @type
-    const.id.gsub(/^::/,"").split("::").all? do |part|
-      clean_part = part.tr(":","").id
+    const.id.gsub(/^::/, "").split("::").all? do |part|
+      clean_part = part.tr(":", "").id
       parts << clean_part
       if position && position.has_constant?(clean_part.id)
         position = position.constant(clean_part.id)
@@ -24,5 +24,43 @@ macro defined?(const)
     {{ parts.join("::").id }}
   {% else %}
     false
+  {% end %}
+end
+
+macro if_defined?(const, code)
+  {%
+    parts = [] of String
+    position = @type
+    const.id.gsub(/^::/, "").split("::").all? do |part|
+      clean_part = part.tr(":", "").id
+      parts << clean_part
+      if position && position.has_constant?(clean_part.id)
+        position = position.constant(clean_part.id)
+      else
+        position = false
+      end
+    end
+  %}
+  {% if position %}
+    {{ code.id }}
+  {% end %}
+end
+
+macro unless_defined?(const, code)
+  {%
+    parts = [] of String
+    position = @type
+    const.id.gsub(/^::/, "").split("::").all? do |part|
+      clean_part = part.tr(":", "").id
+      parts << clean_part
+      if position && position.has_constant?(clean_part.id)
+        position = position.constant(clean_part.id)
+      else
+        position = false
+      end
+    end
+  %}
+  {% unless position %}
+    {{ code.id }}
   {% end %}
 end

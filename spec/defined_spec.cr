@@ -17,4 +17,8 @@ describe Defined do
     defined?("::Foo::Bar").should be_false
     defined?("::Hash").should be_truthy
   end
+
+  it "if_defined? can be used to do things like dynamically create a class" do
+    defined?("::Two")
+  end
 end

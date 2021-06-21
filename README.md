@@ -34,9 +34,31 @@ end
 stuff = defined?("My::Stuff::Library") || Array(String)
 ```
 
-## Development
+Crystal does not permit dynamic creation of classes, and it has compile time checks which happen before macros are evaluated to catch these cases and error on them. So, if one wants to dynamically create classes, it requires a bit of a workaround:
 
-TODO: Write development instructions here
+```crystal
+require "defined"
+
+class One; end
+
+if_defined?("One", <<-ECODE)
+  class Two
+    def call
+      "I am class Two, but I can only exist of class one is defined."
+    end
+  end
+ECODE
+
+puts Two.new.call
+```
+
+One use case might be, in a library, to provide packaged functionality if a given library was not required elsewhere in the code:
+
+```crystal
+unless_defined?("PerfectShard", <<-END)
+  require "project/imperfect_shard"
+END
+```
 
 ## Contributing
 
