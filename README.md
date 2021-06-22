@@ -13,7 +13,7 @@ This is a very small shard that provides a single macro, *defined?()*, which ret
    ```yaml
    dependencies:
      defined:
-       github: wyhaines/defined
+       github: wyhaines/defined.cr
    ```
 
 2. Run `shards install`
