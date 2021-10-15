@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.0.0">
+<meta name="generator" content="Crystal Docs 1.1.1">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="defined">
 
@@ -68,44 +68,36 @@
 
 
 <div class="main-content">
-<h1><a id="defined" class="anchor" href="#defined">
-  <svg class="octicon-link" aria-hidden="true">
+<h1><a id="defined" class="anchor" href="#defined">  <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>defined</h1>
-
-<p><img src="https://img.shields.io/github/workflow/status/wyhaines/defined.cr/defined.cr%20CI?style=for-the-badge&logo=GitHub" alt="Defined.cr CI"/>
-<a href="https://github.com/wyhaines/defined.cr/releases"><img src="https://img.shields.io/github/release/wyhaines/defined.cr.svg?style=for-the-badge" alt="GitHub release"/></a>
-<img src="https://img.shields.io/github/commits-since/wyhaines/defined.cr/latest?style=for-the-badge" alt="GitHub commits since latest release (by SemVer)"/></p>
-
+<p><img src="https://img.shields.io/github/workflow/status/wyhaines/defined.cr/defined.cr%20CI?style=for-the-badge&amp;logo=GitHub" alt="Defined.cr CI" />
+<a href="https://github.com/wyhaines/defined.cr/releases"><img src="https://img.shields.io/github/release/wyhaines/defined.cr.svg?style=for-the-badge" alt="GitHub release" /></a>
+<img src="https://img.shields.io/github/commits-since/wyhaines/defined.cr/latest?style=for-the-badge" alt="GitHub commits since latest release (by SemVer)" /></p>
 <p>This is a very small shard that provides a single macro, <em>defined?()</em>, which returns <em>VALUE</em>/<em>false</em> depending on whether the argument provided points to an existing constant. All lookups start at the top level and descend from there.</p>
-
 <h2><a id="installation" class="anchor" href="#installation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Installation</h2>
-
-<ol><li>Add the dependency to your <code>shard.yml</code>:</li></ol>
-
-<p><code></code>`yaml
-   dependencies:</p>
-
-<pre><code class="language-crystal"> defined:
-   github: wyhaines/defined.cr</code></pre>
-
-<p><code></code>`</p>
-
-<ol><li>Run <code>shards install</code></li></ol>
-
+<ol>
+<li>
+<p>Add the dependency to your <code>shard.yml</code>:</p>
+<pre><code class="language-yaml">dependencies:
+  defined:
+    github: wyhaines/defined.cr</code></pre>
+</li>
+<li>
+<p>Run <code>shards install</code></p>
+</li>
+</ol>
 <h2><a id="usage" class="anchor" href="#usage">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Usage</h2>
-
 <pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;defined&quot;</span></code></pre>
-
 <pre><code class="language-crystal"><span class="k">if</span> defined?(<span class="s">&quot;OptionalFeature&quot;</span>)
   <span class="c"># The OptionalFeature library has been included into the code, so use it.</span>
 <span class="k">else</span>
@@ -113,9 +105,7 @@
 <span class="k">end</span>
 
 stuff <span class="o">=</span> defined?(<span class="s">&quot;My::Stuff::Library&quot;</span>) || <span class="t">Array</span>(<span class="t">String</span>)</code></pre>
-
 <p>Crystal does not permit dynamic creation of classes, and it has compile time checks which happen before macros are evaluated to catch these cases and error on them. So, if one wants to dynamically create classes, it requires a bit of a workaround:</p>
-
 <pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;defined&quot;</span>
 
 <span class="k">class</span> <span class="t">One</span>; <span class="k">end</span>
@@ -129,31 +119,32 @@ if_defined?(<span class="s">&quot;One&quot;</span>, <span class="s">&lt;&lt;-ECO
 ECODE</span>
 
 puts <span class="t">Two</span>.<span class="k">new</span>.call</code></pre>
-
 <p>One use case might be, in a library, to provide packaged functionality if a given library was not required elsewhere in the code:</p>
-
 <pre><code class="language-crystal">unless_defined?(<span class="s">&quot;PerfectShard&quot;</span>, <span class="s">&lt;&lt;-END</span>)
 <span class="s">  require &quot;project/imperfect_shard&quot;
 END</span></code></pre>
-
 <h2><a id="contributing" class="anchor" href="#contributing">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Contributing</h2>
-
-<ol><li>Fork it (&lt;https://github.com/wyhaines/defined/fork>)</li><li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li><li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li><li>Push to the branch (<code>git push origin my-new-feature</code>)</li><li>Create a new Pull Request</li></ol>
-
+<ol>
+<li>Fork it (<a href="https://github.com/wyhaines/defined/fork">https://github.com/wyhaines/defined/fork</a>)</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create a new Pull Request</li>
+</ol>
 <h2><a id="contributors" class="anchor" href="#contributors">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Contributors</h2>
-
-<ul><li><a href="https://github.com/wyhaines">Kirk Haines</a> - creator and maintainer</li></ul>
-
-<p><img src="https://img.shields.io/github/languages/code-size/wyhaines/defined.cr?style=for-the-badge" alt="GitHub code size in bytes"/>
-<img src="https://img.shields.io/github/issues/wyhaines/defined.cr?style=for-the-badge" alt="GitHub issues"/></p>
+<ul>
+<li><a href="https://github.com/wyhaines">Kirk Haines</a> - creator and maintainer</li>
+</ul>
+<p><img src="https://img.shields.io/github/languages/code-size/wyhaines/defined.cr?style=for-the-badge" alt="GitHub code size in bytes" />
+<img src="https://img.shields.io/github/issues/wyhaines/defined.cr?style=for-the-badge" alt="GitHub issues" /></p>
 </div>
 </body>
 </html>
