@@ -3,10 +3,10 @@ require "../src/defined"
 
 class One; end
 
-if_defined?(:One, <<-ECODE)
+if_defined?(:One) do
   class Two; end
-ECODE
+end
 
-if_defined?(:Zero, <<-ECODE)
+if_defined?(:Zero) do
   class Three; end
-ECODE
+end

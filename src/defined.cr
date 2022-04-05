@@ -1,5 +1,5 @@
 module Defined
-  VERSION = "0.1.1"
+  VERSION = "0.2.0"
 end
 
 # This macro accepts a string or a symbol of a fully qualified constant name.
@@ -27,7 +27,7 @@ macro defined?(const)
   {% end %}
 end
 
-macro if_defined?(const, code)
+macro if_defined?(const, &code)
   {%
     parts = [] of String
     position = @type
@@ -42,11 +42,11 @@ macro if_defined?(const, code)
     end
   %}
   {% if position %}
-    {{ code.id }}
+    {{ code.body }}
   {% end %}
 end
 
-macro unless_defined?(const, code)
+macro unless_defined?(const, &code)
   {%
     parts = [] of String
     position = @type
@@ -61,6 +61,6 @@ macro unless_defined?(const, code)
     end
   %}
   {% unless position %}
-    {{ code.id }}
+    {{ code.body }}
   {% end %}
 end
