@@ -33,7 +33,7 @@ class DefinedTestResults
   if_version?("VerMe::VERSION", :>, "1.0.0") do
     Answers[:fully_qualified_absolute_path] = true
   end
-  
+
   Answers[:partially_qualified_absolute_path] = false
   if_version?("VerMe", :<, "2.0.0") do
     Answers[:partially_qualified_absolute_path] = true
@@ -43,7 +43,7 @@ class DefinedTestResults
   if_version?("Bar", :==, "2.3.4") do
     Answers[:partially_qualified_absolute_path_with_mixed_case] = true
   end
-  
+
   Answers[:no_false_positives] = false
   if_version?("Bif", :==, "1.0.0") do
     Answers[:no_false_positives] = true
@@ -56,6 +56,7 @@ class DefinedTestResults
 end
 
 DefinedTestResults::Answers[:partially_qualified_relative_path] = false
+
 class VerMe
   if_version?("Inner", :>=, "0.1.0") do
     DefinedTestResults::Answers[:partially_qualified_relative_path] = true

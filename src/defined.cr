@@ -14,10 +14,10 @@ macro defined?(const)
     else
       positions = [@type, @top_level]
     end
-  
+
     found_position = false
     do_break = false
-    positions.each do |position| 
+    positions.each do |position|
       unless do_break
         const.id.gsub(/^::/, "").split("::").all? do |part|
           clean_part = part.tr(":", "").id
@@ -51,10 +51,10 @@ macro if_defined?(const, &code)
     else
       positions = [@type, @top_level]
     end
-  
+
     found_position = false
     do_break = false
-    positions.each do |position| 
+    positions.each do |position|
       unless do_break
         const.id.gsub(/^::/, "").split("::").all? do |part|
           clean_part = part.tr(":", "").id
@@ -86,10 +86,10 @@ macro unless_defined?(const, &code)
     else
       positions = [@type, @top_level]
     end
-  
+
     found_position = false
     do_break = false
-    positions.each do |position| 
+    positions.each do |position|
       unless do_break
         const.id.gsub(/^::/, "").split("::").all? do |part|
           clean_part = part.tr(":", "").id
@@ -116,57 +116,57 @@ end
 # to the value, using a SemanticVersion comparison.
 macro if_version?(const, comparison, value, &code)
   {%
-  parts = [] of String
-  if const.id =~ /^\s*::/
-    positions = [@top_level]
-  else
-    positions = [@type, @top_level]
-  end
+    parts = [] of String
+    if const.id =~ /^\s*::/
+      positions = [@top_level]
+    else
+      positions = [@type, @top_level]
+    end
 
-  found_position = false
-  do_break = false
-  positions.each do |position| 
-    unless do_break
-      const.id.gsub(/^::/, "").split("::").all? do |part|
-        clean_part = part.tr(":", "").id
-        parts << clean_part
-        if position && position.has_constant?(clean_part.id)
-          found_position = position.constant(clean_part.id)
-          do_break = true
-        else
-          position = false
+    found_position = false
+    do_break = false
+    positions.each do |position|
+      unless do_break
+        const.id.gsub(/^::/, "").split("::").all? do |part|
+          clean_part = part.tr(":", "").id
+          parts << clean_part
+          if position && position.has_constant?(clean_part.id)
+            found_position = position.constant(clean_part.id)
+            do_break = true
+          else
+            position = false
+          end
         end
       end
     end
-  end
 
-  result = false
-  if found_position
-    if found_position.is_a?(StringLiteral)
-      version = found_position
-    elsif found_position.has_constant?(:VERSION)
-      version = found_position.constant(:VERSION)
-    elsif found_position.has_constant?(:Version)
-      version = found_position.constant(:Version)
-    else
-      version = false
-    end
+    result = false
+    if found_position
+      if found_position.is_a?(StringLiteral)
+        version = found_position
+      elsif found_position.has_constant?(:VERSION)
+        version = found_position.constant(:VERSION)
+      elsif found_position.has_constant?(:Version)
+        version = found_position.constant(:Version)
+      else
+        version = false
+      end
 
-    if version
-      cmpx = compare_versions(version, value)
-      if comparison.id == ">"
-        result = cmpx == 1
-      elsif comparison.id == ">="
-        result = cmpx >= 0
-      elsif comparison.id == "<"
-        result = cmpx == -1
-      elsif comparison.id == "<="
-        result = cmpx <= 0
-      elsif comparison.id == "==" || comparison.id == "="
-        result = cmpx == 0
+      if version
+        cmpx = compare_versions(version, value)
+        if comparison.id == ">"
+          result = cmpx == 1
+        elsif comparison.id == ">="
+          result = cmpx >= 0
+        elsif comparison.id == "<"
+          result = cmpx == -1
+        elsif comparison.id == "<="
+          result = cmpx <= 0
+        elsif comparison.id == "==" || comparison.id == "="
+          result = cmpx == 0
+        end
       end
     end
-  end
   %}
   {% if result %}
     {{ code.body }}
@@ -175,60 +175,59 @@ end
 
 macro unless_version?(const, comparison, value, &code)
   {%
-  parts = [] of String
-  if const.id =~ /^\s*::/
-    positions = [@top_level]
-  else
-    positions = [@type, @top_level]
-  end
+    parts = [] of String
+    if const.id =~ /^\s*::/
+      positions = [@top_level]
+    else
+      positions = [@type, @top_level]
+    end
 
-  found_position = false
-  do_break = false
-  positions.each do |position| 
-    unless do_break
-      const.id.gsub(/^::/, "").split("::").all? do |part|
-        clean_part = part.tr(":", "").id
-        parts << clean_part
-        if position && position.has_constant?(clean_part.id)
-          found_position = position.constant(clean_part.id)
-          do_break = true
-        else
-          position = false
+    found_position = false
+    do_break = false
+    positions.each do |position|
+      unless do_break
+        const.id.gsub(/^::/, "").split("::").all? do |part|
+          clean_part = part.tr(":", "").id
+          parts << clean_part
+          if position && position.has_constant?(clean_part.id)
+            found_position = position.constant(clean_part.id)
+            do_break = true
+          else
+            position = false
+          end
         end
       end
     end
-  end
 
-  result = false
-  if found_position
-    if found_position.is_a?(StringLiteral)
-      version = found_position
-    elsif found_position.has_constant?(:VERSION)
-      version = found_position.constant(:VERSION)
-    elsif found_position.has_constant?(:Version)
-      version = found_position.constant(:Version)
-    else
-      version = false
-    end
+    result = false
+    if found_position
+      if found_position.is_a?(StringLiteral)
+        version = found_position
+      elsif found_position.has_constant?(:VERSION)
+        version = found_position.constant(:VERSION)
+      elsif found_position.has_constant?(:Version)
+        version = found_position.constant(:Version)
+      else
+        version = false
+      end
 
-    if version
-      cmpx = compare_versions(version, value)
-      if comparison.id == ">"
-        result = cmpx == 1
-      elsif comparison.id == ">="
-        result = cmpx >= 0
-      elsif comparison.id == "<"
-        result = cmpx == -1
-      elsif comparison.id == "<="
-        result = cmpx <= 0
-      elsif comparison.id == "==" || comparison.id == "="
-        result = cmpx == 0
+      if version
+        cmpx = compare_versions(version, value)
+        if comparison.id == ">"
+          result = cmpx == 1
+        elsif comparison.id == ">="
+          result = cmpx >= 0
+        elsif comparison.id == "<"
+          result = cmpx == -1
+        elsif comparison.id == "<="
+          result = cmpx <= 0
+        elsif comparison.id == "==" || comparison.id == "="
+          result = cmpx == 0
+        end
       end
     end
-  end
   %}
   {% unless result %}
     {{ code.body }}
   {% end %}
 end
-
