@@ -1,6 +1,4 @@
-module Defined
-  VERSION = "0.3.1"
-end
+require "version"
 
 # This macro accepts a string or a symbol of a fully qualified constant name.
 # It validates whether the constant is defined, starting at the top level. The value
