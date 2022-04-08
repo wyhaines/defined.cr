@@ -62,3 +62,23 @@ class VerMe
     DefinedTestResults::Answers[:partially_qualified_relative_path] = true
   end
 end
+
+DefinedTestResults::Answers[:spec_defined_a] = false
+if_enabled?("SPEC_DEFINED_A") do
+  DefinedTestResults::Answers[:spec_defined_a] = true
+end
+
+DefinedTestResults::Answers[:spec_defined_b] = false
+unless_enabled?("SPEC_DEFINED_B") do
+  DefinedTestResults::Answers[:spec_defined_b] = true
+end
+
+DefinedTestResults::Answers[:spec_defined_c] = false
+if_disabled?("SPEC_DEFINED_C") do
+  DefinedTestResults::Answers[:spec_defined_c] = true
+end
+
+DefinedTestResults::Answers[:spec_defined_d] = false
+unless_disabled?("SPEC_DEFINED_D") do
+  DefinedTestResults::Answers[:spec_defined_d] = true
+end

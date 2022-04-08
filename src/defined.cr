@@ -1,4 +1,4 @@
-require "version"
+require "./version"
 
 # This macro accepts a string or a symbol of a fully qualified constant name.
 # It validates whether the constant is defined, starting at the top level. The value
@@ -227,5 +227,37 @@ macro unless_version?(const, comparison, value, &code)
   %}
   {% unless result %}
     {{ code.body }}
+  {% end %}
+end
+
+# Instantiate the code that is passed in the block only if the `env_var` environment
+# variable is set.
+macro if_enabled?(env_var, &block)
+  {% if env(env_var) %}
+    {{ block.body }}
+  {% end %}
+end
+
+# Instantiate the code that is passed in the block only if the `env_var` environment
+# variable is not set.
+macro unless_enabled?(env_var, &block)
+  {% unless env(env_var) %}
+    {{ block.body }}
+  {% end %}
+end
+
+# Instantiate the code that is passed in the block only if the `env_var` environment
+# is not set.
+macro if_disabled?(env_var, &block)
+  {% unless env(env_var) %}
+    {{ block.body }}
+  {% end %}
+end
+
+# Instantiate the code that is passed in the block only if the `env_var` environment
+# variable is set.
+macro unless_disabled?(env_var, &block)
+  {% if env(env_var) %}
+    {{ block.body }}
   {% end %}
 end

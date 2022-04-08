@@ -45,4 +45,20 @@ describe Defined do
   it "unless_version? works as expected" do
     DefinedTestResults::Answers[:unless].should be_true
   end
+
+  it "if_enabled? works as expected" do
+    DefinedTestResults::Answers[:spec_defined_a].should be_false
+  end
+
+  it "unless_enabled? works as expected" do
+    DefinedTestResults::Answers[:spec_defined_b].should be_true
+  end
+
+  it "if_disabled? works as expected" do
+    DefinedTestResults::Answers[:spec_defined_c].should be_true
+  end
+
+  it "unless_disabled? works as expected" do
+    DefinedTestResults::Answers[:spec_defined_d].should be_false
+  end
 end
