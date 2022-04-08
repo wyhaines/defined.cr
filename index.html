@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.2.2">
+<meta name="generator" content="Crystal Docs 1.3.2">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="defined">
 
@@ -75,7 +75,10 @@
 <p><img src="https://img.shields.io/github/workflow/status/wyhaines/defined.cr/defined.cr%20CI?style=for-the-badge&amp;logo=GitHub" alt="Defined.cr CI" />
 <a href="https://github.com/wyhaines/defined.cr/releases"><img src="https://img.shields.io/github/release/wyhaines/defined.cr.svg?style=for-the-badge" alt="GitHub release" /></a>
 <img src="https://img.shields.io/github/commits-since/wyhaines/defined.cr/latest?style=for-the-badge" alt="GitHub commits since latest release (by SemVer)" /></p>
-<p>This is a very small shard that provides a single macro, <em>defined?()</em>, which returns <em>VALUE</em>/<em>false</em> depending on whether the argument provided points to an existing constant. All lookups start at the top level and descend from there.</p>
+<p>This shard provides a variety of macros that can be used to check, at compile time, if a
+given constant is defined, and also to conditionally compile code based on whether a
+constant is or is not defined, whether a VERSION meets a requirement, or whether an
+environment variable is or is not defined.</p>
 <h2><a id="installation" class="anchor" href="#installation">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -98,38 +101,134 @@
   </svg>
 </a>Usage</h2>
 <pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;defined&quot;</span></code></pre>
-<pre><code class="language-crystal"><span class="k">if</span> defined?(<span class="s">&quot;OptionalFeature&quot;</span>)
+<h3><a id="constant-check-macro-notes" class="anchor" href="#constant-check-macro-notes">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Constant Check Macro Notes</h3>
+<p>The constant check that of of the constant validation macros (<code><a href="toplevel.html#defined%3F%28const%29-macro">defined?</a></code>, <code><a href="toplevel.html#if_defined%3F%28const%2C%26code%29-macro">if_defined?</a></code>, <code><a href="toplevel.html#unless_defined%3F%28const%2C%26code%29-macro">unless_defined?</a></code>) use first checks for the constant relative to the type that the macro is
+running in, and then if it doesn't find it there, it checks starting at the top level, with
+one exception. If the class name starts with a <code>::</code> then the check only operates from the
+top level. The class name can be provided as a String, a Symbol, or as a bare Class reference.</p>
+<p>i.e.</p>
+<pre><code class="language-crystal">if_defined?(<span class="s">&quot;Int32&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will always work&quot;</span>
+<span class="k">end</span>
+
+unless_defined?(<span class="t">ClassName</span><span class="t">::</span><span class="t">That</span><span class="t">::</span><span class="t">Does</span><span class="t">::</span><span class="t">Not</span><span class="t">::</span><span class="t">Exist</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This works, too. Cool.&quot;</span>
+<span class="k">end</span></code></pre>
+<h4><a id="defined-1" class="anchor" href="#defined-1">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>defined?</h4>
+<pre><code class="language-crystal"><span class="k">if</span> defined?(<span class="t">OptionalFeature</span>)
   <span class="c"># The OptionalFeature library has been included into the code, so use it.</span>
 <span class="k">else</span>
   <span class="c"># It&#39;s not there.</span>
 <span class="k">end</span>
 
-stuff <span class="o">=</span> defined?(<span class="s">&quot;My::Stuff::Library&quot;</span>) || <span class="t">Array</span>(<span class="t">String</span>)</code></pre>
-<p>Crystal does not permit dynamic creation of classes, and it has compile time checks which happen before macros are evaluated to catch these cases and error on them. So, if one wants to dynamically create classes, it requires a bit of a workaround:</p>
+stuff <span class="o">=</span> defined?(<span class="t">My</span><span class="t">::</span><span class="t">Stuff</span><span class="t">::</span><span class="t">Library</span>) || <span class="t">Array</span>(<span class="t">String</span>)</code></pre>
+<h4><a id="if-defined" class="anchor" href="#if-defined">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>if_defined?</h4>
 <pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;defined&quot;</span>
 
 <span class="k">class</span> <span class="t">One</span>; <span class="k">end</span>
 
-if_defined?(<span class="s">&quot;One&quot;</span>, <span class="s">&lt;&lt;-ECODE</span>)
-<span class="s">  class Two
-    def call
-      &quot;I am class Two, but I can only exist of class one is defined.&quot;
-    end
-  end
-ECODE</span>
+if_defined?(<span class="t">One</span>) <span class="k">do</span>
+  <span class="k">class</span> <span class="t">Two</span>
+    <span class="k">def</span> <span class="m">call</span>
+      <span class="s">&quot;I am class Two, but I can only exist of class one is defined.&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
 puts <span class="t">Two</span>.<span class="k">new</span>.call</code></pre>
-<p>One use case might be, in a library, to provide packaged functionality if a given library was not required elsewhere in the code:</p>
-<pre><code class="language-crystal">unless_defined?(<span class="s">&quot;PerfectShard&quot;</span>, <span class="s">&lt;&lt;-END</span>)
-<span class="s">  require &quot;project/imperfect_shard&quot;
-END</span></code></pre>
+<h4><a id="unless-defined" class="anchor" href="#unless-defined">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>unless_defined?</h4>
+<pre><code class="language-crystal">unless_defined?(<span class="t">PerfectShard</span>) <span class="k">do</span>
+  <span class="k">require</span> <span class="s">&quot;project/imperfect_shard&quot;</span>
+<span class="k">end</span></code></pre>
+<h3><a id="version-checks" class="anchor" href="#version-checks">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Version Checks</h3>
+<p>The version check macros leverage the same constant lookup code as the constant check macros, but they automatically search for a <code>VERSION</code> or a <code>Version</code> constant under that namespace, unless the provided constant resolves to a <code>String</code>.</p>
+<h4><a id="if-version-and-unless-version" class="anchor" href="#if-version-and-unless-version">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>if_version? and unless_version?</h4>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">VerMe</span>
+  <span class="t">VERSION</span> <span class="o">=</span> <span class="s">&quot;1.2.3&quot;</span>
+
+  <span class="k">class</span> <span class="t">Inner</span>
+    <span class="t">Version</span> <span class="o">=</span> <span class="s">&quot;0.1.0&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">class</span> <span class="t">SecondInner</span>
+    <span class="t">ClassVersion</span> <span class="o">=</span> <span class="s">&quot;0.3.7&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+if_version?(<span class="t">VerMe</span>, <span class="n">:&gt;=</span>, <span class="s">&quot;1.2.0&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the version of VerMe is &gt;= 1.2.0&quot;</span>
+<span class="k">end</span>
+
+if_version?(<span class="t">VerMe</span><span class="t">::</span><span class="t">Inner</span>, <span class="n">:&gt;=</span>, <span class="s">&quot;0.1.0&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the version of VerMe::Inner is &gt;= 0.1.0&quot;</span>
+<span class="k">end</span>
+
+unless_version?(<span class="t">VerMe</span><span class="t">::</span><span class="t">SecondInner</span><span class="t">::</span><span class="t">ClassVersion</span>, <span class="n">:&gt;=</span>, <span class="s">&quot;0.4.0&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This also works. Hey, maybe you need a new version of that class?&quot;</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="t">VerMe</span>
+  if_version?(<span class="t">Inner</span>, <span class="n">:&lt;</span>, <span class="s">&quot;0.2.0&quot;</span>) <span class="k">do</span>
+    puts <span class="s">&quot;WARNING -- Using version of Inner less than 0.2.0 is deprecated, and support will be removed&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<h3><a id="environment-variable-checks" class="anchor" href="#environment-variable-checks">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Environment Variable Checks</h3>
+<p>This facility provides four very simple macros (<code><a href="toplevel.html#if_enabled%3F%28env_var%2C%26block%29-macro">if_enabled?</a></code>, <code><a href="toplevel.html#unless_enabled%3F%28env_var%2C%26block%29-macro">unless_enabled?</a></code>, <code><a href="toplevel.html#if_disabled%3F%28env_var%2C%26block%29-macro">if_disabled?</a></code>, <code><a href="toplevel.html#unless_disabled%3F%28env_var%2C%26block%29-macro">unless_disabled?</a></code>) which can be used to conditionally compile code based on whether an environment variable is set, or not. The macros use a shell based definition of truthy and falsey, so <code>0</code> and <code>false</code> and <code>&quot;&quot;</code> are considered false, while all other values are true.</p>
+<p><code><a href="toplevel.html#if_enabled%3F%28env_var%2C%26block%29-macro">if_enabled?</a></code> instantiates the code in the provided block if the environment variable exists, and is set to
+a shell truthy value.</p>
+<p><code><a href="toplevel.html#unless_enabled%3F%28env_var%2C%26block%29-macro">unless_enabled?</a></code> instantiates the code in the provided block if the environment variable does not exist, or is set to a shell falsey value.</p>
+<p><code><a href="toplevel.html#if_disabled%3F%28env_var%2C%26block%29-macro">if_disabled?</a></code> instantiates the code in the provided block if the environment variable des not exist, or is set to a shell falsey value.</p>
+<p><code><a href="toplevel.html#unless_disabled%3F%28env_var%2C%26block%29-macro">unless_disabled?</a></code> instantiates the code in the provided block if the environment variable exists, and is set to a shell truthy value.</p>
+<pre><code class="language-crystal">if_enabled?(<span class="s">&quot;ENV_VAR&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the environment variable ENV_VAR is set to a truthy value&quot;</span>
+<span class="k">end</span>
+
+unless_enabled?(<span class="s">&quot;ENV_VAR&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the environment variable ENV_VAR is not set to a truthy value&quot;</span>
+<span class="k">end</span>
+
+if_disabled?(<span class="s">&quot;ENV_VAR&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the environment variable ENV_VAR is not set to a truthy value&quot;</span>
+<span class="k">end</span>
+
+unless_disabled?(<span class="s">&quot;ENV_VAR&quot;</span>) <span class="k">do</span>
+  puts <span class="s">&quot;This will only run if the environment variable ENV_VAR is set to a truthy value&quot;</span>
+<span class="k">end</span></code></pre>
 <h2><a id="contributing" class="anchor" href="#contributing">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Contributing</h2>
 <ol>
-<li>Fork it (<a href="https://github.com/wyhaines/defined/fork">https://github.com/wyhaines/defined/fork</a>)</li>
+<li>Fork it (<a href="https://github.com/wyhaines/defined.cr/fork">https://github.com/wyhaines/defined.cr/fork</a>)</li>
 <li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
 <li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
 <li>Push to the branch (<code>git push origin my-new-feature</code>)</li>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.2.2">
+<meta name="generator" content="Crystal Docs 1.3.2">
 <meta name="crystal_docs.project_version" content="main">
 <meta name="crystal_docs.project_name" content="defined">
 
@@ -131,10 +131,54 @@
       <li class="entry-summary">
         <a href="#if_defined%3F%28const%2C%26code%29-macro" class="signature"><strong>if_defined?</strong>(const, &code)</a>
         
+          <div class="summary"><p>This macro accepts a string or a symbol of a fully qualified constant name.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#if_disabled%3F%28env_var%2C%26block%29-macro" class="signature"><strong>if_disabled?</strong>(env_var, &block)</a>
+        
+          <div class="summary"><p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment is not set.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#if_enabled%3F%28env_var%2C%26block%29-macro" class="signature"><strong>if_enabled?</strong>(env_var, &block)</a>
+        
+          <div class="summary"><p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment variable is set.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#if_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro" class="signature"><strong>if_version?</strong>(const, comparison, value, &code)</a>
+        
+          <div class="summary"><p>This macro accepts a string or a symbol of a fully qualified constant name.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#unless_defined%3F%28const%2C%26code%29-macro" class="signature"><strong>unless_defined?</strong>(const, &code)</a>
+        
+          <div class="summary"><p>This macro accepts a string or a symbol of a fully qualified constant name.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#unless_disabled%3F%28env_var%2C%26block%29-macro" class="signature"><strong>unless_disabled?</strong>(env_var, &block)</a>
+        
+          <div class="summary"><p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment variable is set.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#unless_enabled%3F%28env_var%2C%26block%29-macro" class="signature"><strong>unless_enabled?</strong>(env_var, &block)</a>
+        
+          <div class="summary"><p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment variable is not set.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#unless_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro" class="signature"><strong>unless_version?</strong>(const, comparison, value, &code)</a>
         
       </li>
     
@@ -181,7 +225,7 @@ returned.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/wyhaines/defined.cr/blob/1c405735a7f76dfa89b372e65a87e98d1904d31f/src/defined.cr#L9" target="_blank">View source</a>]
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L7" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -194,10 +238,87 @@ returned.</p>
         <a class="method-permalink" href="#if_defined%3F%28const%2C%26code%29-macro">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>This macro accepts a string or a symbol of a fully qualified constant name.
+It validates whether the constant is defined, starting at the top level. If the
+constant is defined, the code passed to the macro via a block will be instantiated.
+This permits conditional code evaluation based on whether a constant is defined.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/wyhaines/defined.cr/blob/1c405735a7f76dfa89b372e65a87e98d1904d31f/src/defined.cr#L30" target="_blank">View source</a>]
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L44" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="if_disabled?(env_var,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>if_disabled?</strong>(env_var, &block)
+
+        <a class="method-permalink" href="#if_disabled%3F%28env_var%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment
+is not set.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L253" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="if_enabled?(env_var,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>if_enabled?</strong>(env_var, &block)
+
+        <a class="method-permalink" href="#if_enabled%3F%28env_var%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment
+variable is set.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L235" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="if_version?(const,comparison,value,&amp;code)-macro">
+      <div class="signature">
+        
+        macro <strong>if_version?</strong>(const, comparison, value, &code)
+
+        <a class="method-permalink" href="#if_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>This macro accepts a string or a symbol of a fully qualified constant name.
+This constant will be checked for a <code>VERSION</code> or a <code>Version</code> constant, or a
+<code>#version</code> method under it. If it exists, the value held by that constant, or
+returned by the <code>#version</code> method is compared with the provided comparison operator
+to the value, using a SemanticVersion comparison.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L115" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -210,10 +331,78 @@ returned.</p>
         <a class="method-permalink" href="#unless_defined%3F%28const%2C%26code%29-macro">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>This macro accepts a string or a symbol of a fully qualified constant name.
+It validates whether the constant is defined, starting at the top level. If the
+constant is not defined, the code passed to the macro via a block will be instantiated.
+This permits conditional code evaluation based on whether a constant is defined.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/wyhaines/defined.cr/blob/1c405735a7f76dfa89b372e65a87e98d1904d31f/src/defined.cr#L49" target="_blank">View source</a>]
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L79" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="unless_disabled?(env_var,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>unless_disabled?</strong>(env_var, &block)
+
+        <a class="method-permalink" href="#unless_disabled%3F%28env_var%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment
+variable is set.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L262" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="unless_enabled?(env_var,&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>unless_enabled?</strong>(env_var, &block)
+
+        <a class="method-permalink" href="#unless_enabled%3F%28env_var%2C%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Instantiate the code that is passed in the block only if the <code>env_var</code> environment
+variable is not set.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L244" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="unless_version?(const,comparison,value,&amp;code)-macro">
+      <div class="signature">
+        
+        macro <strong>unless_version?</strong>(const, comparison, value, &code)
+
+        <a class="method-permalink" href="#unless_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/wyhaines/defined.cr/blob/94c51f9dc9397848f4d9c4360246de28fee0caa4/src/defined.cr#L174" target="_blank">View source</a>]
         
       </div>
     </div>
