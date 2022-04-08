@@ -233,7 +233,8 @@ end
 # Instantiate the code that is passed in the block only if the `env_var` environment
 # variable is set.
 macro if_enabled?(env_var, &block)
-  {% if env(env_var) %}
+  {% val = env(env_var) %}
+  {% if val && val != "0" && val != "false" && !val.empty? %}
     {{ block.body }}
   {% end %}
 end
@@ -241,7 +242,8 @@ end
 # Instantiate the code that is passed in the block only if the `env_var` environment
 # variable is not set.
 macro unless_enabled?(env_var, &block)
-  {% unless env(env_var) %}
+  {% val = env(env_var) %}
+  {% unless val && val != "0" && val != "false" && !val.empty? %}
     {{ block.body }}
   {% end %}
 end
@@ -249,7 +251,8 @@ end
 # Instantiate the code that is passed in the block only if the `env_var` environment
 # is not set.
 macro if_disabled?(env_var, &block)
-  {% unless env(env_var) %}
+  {% val = env(env_var) %}
+  {% unless val && val != "0" && val != "false" && !val.empty? %}
     {{ block.body }}
   {% end %}
 end
@@ -257,7 +260,8 @@ end
 # Instantiate the code that is passed in the block only if the `env_var` environment
 # variable is set.
 macro unless_disabled?(env_var, &block)
-  {% if env(env_var) %}
+  {% val = env(env_var) %}
+  {% if val && val != "0" && val != "false" && !val.empty? %}
     {{ block.body }}
   {% end %}
 end

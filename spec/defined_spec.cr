@@ -61,4 +61,10 @@ describe Defined do
   it "unless_disabled? works as expected" do
     DefinedTestResults::Answers[:spec_defined_d].should be_false
   end
+
+  it "can take class names that don't even exist" do
+    unless_defined?(ClassName::NotDefined) do
+      true.should be_true
+    end
+  end
 end

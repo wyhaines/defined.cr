@@ -4,7 +4,10 @@
 [![GitHub release](https://img.shields.io/github/release/wyhaines/defined.cr.svg?style=for-the-badge)](https://github.com/wyhaines/defined.cr/releases)
 ![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/wyhaines/defined.cr/latest?style=for-the-badge)
 
-This is a very small shard that provides a single macro, *defined?()*, which returns *VALUE*/*false* depending on whether the argument provided points to an existing constant. All lookups start at the top level and descend from there.
+This shard provides a variety of macros that can be used to check, at compile time, if a
+given constant is defined, and also to conditionally compile code based on whether a
+constant is or is not defined, whether a VERSION meets a requirement, or whether an
+environment variable is or is not defined.
 
 ## Installation
 
@@ -24,45 +27,136 @@ This is a very small shard that provides a single macro, *defined?()*, which ret
 require "defined"
 ```
 
+### Constant Check Macro Notes
+
+The constant check that of of the constant validation macros (`defined?`, `if_defined?`, `unless_defined?`) use first checks for the constant relative to the type that the macro is
+running in, and then if it doesn't find it there, it checks starting at the top level, with
+one exception. If the class name starts with a `::` then the check only operates from the
+top level. The class name can be provided as a String, a Symbol, or as a bare Class reference.
+
+
+i.e.
+
 ```crystal
-if defined?("OptionalFeature")
+if_defined?("Int32") do
+  puts "This will always work"
+end
+
+unless_defined?(ClassName::That::Does::Not::Exist) do
+  puts "This works, too. Cool."
+end
+```
+
+#### defined?
+
+```crystal
+if defined?(OptionalFeature)
   # The OptionalFeature library has been included into the code, so use it.
 else
   # It's not there.
 end
 
-stuff = defined?("My::Stuff::Library") || Array(String)
+stuff = defined?(My::Stuff::Library) || Array(String)
 ```
 
-Crystal does not permit dynamic creation of classes, and it has compile time checks which happen before macros are evaluated to catch these cases and error on them. So, if one wants to dynamically create classes, it requires a bit of a workaround:
+#### if_defined?
 
 ```crystal
 require "defined"
 
 class One; end
 
-if_defined?("One", <<-ECODE)
+if_defined?(One) do
   class Two
     def call
       "I am class Two, but I can only exist of class one is defined."
     end
   end
-ECODE
+end
 
 puts Two.new.call
 ```
 
-One use case might be, in a library, to provide packaged functionality if a given library was not required elsewhere in the code:
+#### unless_defined?
 
 ```crystal
-unless_defined?("PerfectShard", <<-END)
+unless_defined?(PerfectShard) do
   require "project/imperfect_shard"
-END
+end
+```
+
+### Version Checks
+
+The version check macros leverage the same constant lookup code as the constant check macros, but they automatically search for a `VERSION` or a `Version` constant under that namespace, unless the provided constant resolves to a `String`.
+
+#### if_version? and unless_version?
+
+```crystal
+class VerMe
+  VERSION = "1.2.3"
+
+  class Inner
+    Version = "0.1.0"
+  end
+
+  class SecondInner
+    ClassVersion = "0.3.7"
+  end
+end
+
+if_version?(VerMe, :>=, "1.2.0") do
+  puts "This will only run if the version of VerMe is >= 1.2.0"
+end
+
+if_version?(VerMe::Inner, :>=, "0.1.0") do
+  puts "This will only run if the version of VerMe::Inner is >= 0.1.0"
+end
+
+unless_version?(VerMe::SecondInner::ClassVersion, :>=, "0.4.0") do
+  puts "This also works. Hey, maybe you need a new version of that class?"
+end
+
+class VerMe
+  if_version?(Inner, :<, "0.2.0") do
+    puts "WARNING -- Using version of Inner less than 0.2.0 is deprecated, and support will be removed"
+  end
+end
+```
+
+### Environment Variable Checks
+
+This facility provides four very simple macros (`if_enabled?`, `unless_enabled?`, `if_disabled?`, `unless_disabled?`) which can be used to conditionally compile code based on whether an environment variable is set, or not. The macros use a shell based definition of truthy and falsey, so `0` and `false` and `""` are considered false, while all other values are true.
+
+`if_enabled?` instantiates the code in the provided block if the environment variable exists, and is set to
+a shell truthy value.
+
+`unless_enabled?` instantiates the code in the provided block if the environment variable does not exist, or is set to a shell falsey value.
+
+`if_disabled?` instantiates the code in the provided block if the environment variable des not exist, or is set to a shell falsey value.
+
+`unless_disabled?` instantiates the code in the provided block if the environment variable exists, and is set to a shell truthy value.
+
+```crystal
+if_enabled?("ENV_VAR") do
+  puts "This will only run if the environment variable ENV_VAR is set to a truthy value"
+end
+
+unless_enabled?("ENV_VAR") do
+  puts "This will only run if the environment variable ENV_VAR is not set to a truthy value"
+end
+
+if_disabled?("ENV_VAR") do
+  puts "This will only run if the environment variable ENV_VAR is not set to a truthy value"
+end
+
+unless_disabled?("ENV_VAR") do
+  puts "This will only run if the environment variable ENV_VAR is set to a truthy value"
+end
 ```
 
 ## Contributing
 
-1. Fork it (<https://github.com/wyhaines/defined/fork>)
+1. Fork it (<https://github.com/wyhaines/defined.cr/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
