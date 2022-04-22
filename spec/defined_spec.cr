@@ -67,4 +67,12 @@ describe Defined do
       true.should be_true
     end
   end
+
+  it "if_version? can handle a constant that resolves back to a MacroVersion" do
+    DefinedTestResults::Answers[:workaround_if].should be_true
+  end
+
+  it "unless_version? can handle a constant that resolves back to a MacroVersion" do
+    DefinedTestResults::Answers[:workaround_unless].should be_true
+  end
 end

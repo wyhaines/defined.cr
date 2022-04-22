@@ -128,8 +128,8 @@ macro if_version?(const, comparison, value, &code)
         const.id.gsub(/^::/, "").split("::").all? do |part|
           clean_part = part.tr(":", "").id
           parts << clean_part
-          if position && position.has_constant?(clean_part.id)
-            found_position = position.constant(clean_part.id)
+          if position && position.resolve.has_constant?(clean_part.id)
+            found_position = position.resolve.constant(clean_part.id)
             do_break = true
           else
             position = false
@@ -139,18 +139,24 @@ macro if_version?(const, comparison, value, &code)
     end
 
     result = false
+    do_nested_version = false
+    full_const = nil
     if found_position
       if found_position.is_a?(StringLiteral)
         version = found_position
-      elsif found_position.has_constant?(:VERSION)
-        version = found_position.constant(:VERSION)
-      elsif found_position.has_constant?(:Version)
-        version = found_position.constant(:Version)
+      elsif found_position.resolve.has_constant?(:VERSION)
+        full_const = "#{const.id}::VERSION"
+        version = found_position.resolve.constant(:VERSION)
+      elsif found_position.resolve.has_constant?(:Version)
+        full_const = "#{const.id}::Version"
+        version = found_position.resolve.constant(:Version)
       else
         version = false
       end
 
-      if version
+      if version.is_a?(MacroExpression)
+        do_nested_version = true
+      elsif version
         cmpx = compare_versions(version, value)
         if comparison.id == ">"
           result = cmpx == 1
@@ -166,7 +172,14 @@ macro if_version?(const, comparison, value, &code)
       end
     end
   %}
-  {% if result %}
+  {% if do_nested_version %}
+    \{% begin %}
+    {{ "X".id }}%cnst = {{ version.id }}
+    \{% end %}
+    if_version?( {{ "X".id }}%cnst, {{ comparison }}, {{ value.stringify.id }}) do
+      {{ code.body }}
+    end
+  {% elsif result %}
     {{ code.body }}
   {% end %}
 end
@@ -187,8 +200,8 @@ macro unless_version?(const, comparison, value, &code)
         const.id.gsub(/^::/, "").split("::").all? do |part|
           clean_part = part.tr(":", "").id
           parts << clean_part
-          if position && position.has_constant?(clean_part.id)
-            found_position = position.constant(clean_part.id)
+          if position && position.resolve.has_constant?(clean_part.id)
+            found_position = position.resolve.constant(clean_part.id)
             do_break = true
           else
             position = false
@@ -198,18 +211,24 @@ macro unless_version?(const, comparison, value, &code)
     end
 
     result = false
+    do_nested_version = false
+    full_const = nil
     if found_position
       if found_position.is_a?(StringLiteral)
         version = found_position
-      elsif found_position.has_constant?(:VERSION)
-        version = found_position.constant(:VERSION)
-      elsif found_position.has_constant?(:Version)
-        version = found_position.constant(:Version)
+      elsif found_position.resolve.has_constant?(:VERSION)
+        full_const = "#{const.id}::VERSION"
+        version = found_position.resolve.constant(:VERSION)
+      elsif found_position.resolve.has_constant?(:Version)
+        full_const = "#{const.id}::Version"
+        version = found_position.resolve.constant(:Version)
       else
         version = false
       end
 
-      if version
+      if version.is_a?(MacroExpression)
+        do_nested_version = true
+      elsif version
         cmpx = compare_versions(version, value)
         if comparison.id == ">"
           result = cmpx == 1
@@ -225,7 +244,14 @@ macro unless_version?(const, comparison, value, &code)
       end
     end
   %}
-  {% unless result %}
+  {% if do_nested_version %}
+    \{% begin %}
+    {{ "X".id }}%cnst = {{ version.id }}
+    \{% end %}
+    unless_version?( {{ "X".id }}%cnst, {{ comparison }}, {{ value.stringify.id }}) do
+      {{ code.body }}
+    end
+  {% elsif !result %}
     {{ code.body }}
   {% end %}
 end
