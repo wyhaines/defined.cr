@@ -26,6 +26,10 @@ end
 class Bif
 end
 
+class Workaround
+  VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify }}
+end
+
 class DefinedTestResults
   Answers = {} of Symbol => Bool
 
@@ -52,6 +56,16 @@ class DefinedTestResults
   Answers[:unless] = false
   unless_version?(VerMe, :>, "2.0.0") do
     Answers[:unless] = true
+  end
+
+  Answers[:workaround_if] = false
+  if_version?(Workaround, :>, "0.0.1") do
+    Answers[:workaround_if] = true
+  end
+
+  Answers[:workaround_unless] = false
+  unless_version?(Workaround, :>, "99.99.99") do
+    Answers[:workaround_unless] = true
   end
 end
 
