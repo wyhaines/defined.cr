@@ -138,6 +138,7 @@ end
 # if_version?("Crystal", :>, "1.0.0") do
 #   # Do a thing that only works on Crystal 1.0.0 and later
 # end
+# ```
 #
 # #### Caveats
 #
@@ -256,6 +257,8 @@ macro if_version?(const, comparison, value, &code)
   {% end %}
 end
 
+# See the documentation for `#if_version?`.
+#
 macro unless_version?(const, comparison, value, &code)
   {%
     parts = [] of String
