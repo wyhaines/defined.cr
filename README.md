@@ -121,7 +121,18 @@ class VerMe
     puts "WARNING -- Using version of Inner less than 0.2.0 is deprecated, and support will be removed"
   end
 end
+
+class MacrosAreTough
+  VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify }}
+end
+
+if_version?(MacrosAreTough, :>=, "0.1.0") do
+  puts "This will only run if the version of MacrosAreTough is >= 0.1.0"
+end
 ```
+
+The last example, with `MacrosAreTough`, [deserves additional explanation](https://wyhaines.github.io/defined.cr/toplevel.html#if_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro), because inline macro expressions
+like that pose a particular challenge for the library, and there are some edge cases.
 
 ### Environment Variable Checks
 
@@ -153,6 +164,10 @@ unless_disabled?("ENV_VAR") do
   puts "This will only run if the environment variable ENV_VAR is set to a truthy value"
 end
 ```
+
+## More Documentation
+
+[https://wyhaines.github.io/defined.cr/toplevel.html](https://wyhaines.github.io/defined.cr/toplevel.html)
 
 ## Contributing
 
