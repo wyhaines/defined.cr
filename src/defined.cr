@@ -13,32 +13,47 @@ require "./version"
 #
 macro defined?(const)
   {%
-    parts = [] of String
     if const.id =~ /^\s*::/
       positions = [@top_level]
     else
       positions = [@type, @top_level]
     end
-
-    found_position = false
+  %}
+  {%
+    found_position = nil
+    position = nil
+    parts = [] of String
     do_break = false
-    positions.each do |position|
+
+    positions.each do |starting_position|
       unless do_break
-        const.id.gsub(/^::/, "").split("::").all? do |part|
-          clean_part = part.tr(":", "").id
-          parts << clean_part
-          if position && position.has_constant?(clean_part.id)
-            found_position = position.constant(clean_part.id)
-            do_break = true
-          else
-            position = false
+        inner_do_break = false
+        parts = [] of String
+        clean_part = const.id.gsub(/^::/, "")
+        full_part = "#{starting_position}::#{clean_part}".gsub(/^(main::|<Program>::)/, "").id
+        position = @top_level
+        full_part.split("::").each do |part|
+          unless inner_do_break
+            if position.has_constant?(part.id)
+              position = position.constant(part.id)
+              parts << part
+            else
+              position = nil
+              parts = [] of String
+              inner_do_break = true
+            end
           end
         end
+        do_break = true if position
       end
+    end
+
+    if !parts.empty?
+      found_position = parse_type(parts.join("::"))
     end
   %}
   {% if found_position %}
-    {{ parts.join("::").id }}
+    {{ found_position }}
   {% else %}
     false
   {% end %}
@@ -57,28 +72,43 @@ end
 #
 macro if_defined?(const, &code)
   {%
-    parts = [] of String
     if const.id =~ /^\s*::/
       positions = [@top_level]
     else
       positions = [@type, @top_level]
     end
-
-    found_position = false
+  %}
+  {%
+    found_position = nil
+    position = nil
+    parts = [] of String
     do_break = false
-    positions.each do |position|
+
+    positions.each do |starting_position|
       unless do_break
-        const.id.gsub(/^::/, "").split("::").all? do |part|
-          clean_part = part.tr(":", "").id
-          parts << clean_part
-          if position && position.has_constant?(clean_part.id)
-            found_position = position.constant(clean_part.id)
-            do_break = true
-          else
-            position = false
+        inner_do_break = false
+        parts = [] of String
+        clean_part = const.id.gsub(/^::/, "")
+        full_part = "#{starting_position}::#{clean_part}".gsub(/^(main::|<Program>::)/, "").id
+        position = @top_level
+        full_part.split("::").each do |part|
+          unless inner_do_break
+            if position.has_constant?(part.id)
+              position = position.constant(part.id)
+              parts << part
+            else
+              position = nil
+              parts = [] of String
+              inner_do_break = true
+            end
           end
         end
+        do_break = true if position
       end
+    end
+
+    if !parts.empty?
+      found_position = parse_type(parts.join("::"))
     end
   %}
   {% if found_position %}
@@ -99,28 +129,43 @@ end
 #
 macro unless_defined?(const, &code)
   {%
-    parts = [] of String
     if const.id =~ /^\s*::/
       positions = [@top_level]
     else
       positions = [@type, @top_level]
     end
-
-    found_position = false
+  %}
+  {%
+    found_position = nil
+    position = nil
+    parts = [] of String
     do_break = false
-    positions.each do |position|
+
+    positions.each do |starting_position|
       unless do_break
-        const.id.gsub(/^::/, "").split("::").all? do |part|
-          clean_part = part.tr(":", "").id
-          parts << clean_part
-          if position && position.has_constant?(clean_part.id)
-            found_position = position.constant(clean_part.id)
-            do_break = true
-          else
-            position = false
+        inner_do_break = false
+        parts = [] of String
+        clean_part = const.id.gsub(/^::/, "")
+        full_part = "#{starting_position}::#{clean_part}".gsub(/^(main::|<Program>::)/, "").id
+        position = @top_level
+        full_part.split("::").each do |part|
+          unless inner_do_break
+            if position.has_constant?(part.id)
+              position = position.constant(part.id)
+              parts << part
+            else
+              position = nil
+              parts = [] of String
+              inner_do_break = true
+            end
           end
         end
+        do_break = true if position
       end
+    end
+
+    if !parts.empty?
+      found_position = parse_type(parts.join("::"))
     end
   %}
   {% unless found_position %}
@@ -187,36 +232,51 @@ end
 #
 macro if_version?(const, comparison, value, &code)
   {%
-    parts = [] of String
     if const.id =~ /^\s*::/
       positions = [@top_level]
     else
       positions = [@type, @top_level]
     end
-
-    found_position = false
+  %}
+  {%
+    found_position = nil
+    position = nil
+    parts = [] of String
     do_break = false
-    positions.each do |position|
+
+    positions.each do |starting_position|
       unless do_break
-        const.id.gsub(/^::/, "").split("::").all? do |part|
-          clean_part = part.tr(":", "").id
-          parts << clean_part
-          if position && position.resolve.has_constant?(clean_part.id)
-            found_position = position.resolve.constant(clean_part.id)
-            do_break = true
-          else
-            position = false
+        inner_do_break = false
+        parts = [] of String
+        clean_part = const.id.gsub(/^::/, "")
+        full_part = "#{starting_position}::#{clean_part}".gsub(/^(main::|<Program>::)/, "").id
+        position = @top_level
+        full_part.split("::").each do |part|
+          unless inner_do_break
+            if position.has_constant?(part.id)
+              position = position.constant(part.id)
+              parts << part
+            else
+              position = nil
+              parts = [] of String
+              inner_do_break = true
+            end
           end
         end
+        do_break = true if position
       end
+    end
+
+    if !parts.empty?
+      found_position = parse_type(parts.join("::"))
     end
 
     result = false
     do_nested_version = false
     full_const = nil
     if found_position
-      if found_position.is_a?(StringLiteral)
-        version = found_position
+      if found_position.resolve.is_a?(StringLiteral)
+        version = found_position.resolve
       elsif found_position.resolve.has_constant?(:VERSION)
         full_const = "#{const.id}::VERSION"
         version = found_position.resolve.constant(:VERSION)
@@ -261,36 +321,51 @@ end
 #
 macro unless_version?(const, comparison, value, &code)
   {%
-    parts = [] of String
     if const.id =~ /^\s*::/
       positions = [@top_level]
     else
       positions = [@type, @top_level]
     end
-
-    found_position = false
+  %}
+  {%
+    found_position = nil
+    position = nil
+    parts = [] of String
     do_break = false
-    positions.each do |position|
+
+    positions.each do |starting_position|
       unless do_break
-        const.id.gsub(/^::/, "").split("::").all? do |part|
-          clean_part = part.tr(":", "").id
-          parts << clean_part
-          if position && position.resolve.has_constant?(clean_part.id)
-            found_position = position.resolve.constant(clean_part.id)
-            do_break = true
-          else
-            position = false
+        inner_do_break = false
+        parts = [] of String
+        clean_part = const.id.gsub(/^::/, "")
+        full_part = "#{starting_position}::#{clean_part}".gsub(/^(main::|<Program>::)/, "").id
+        position = @top_level
+        full_part.split("::").each do |part|
+          unless inner_do_break
+            if position.has_constant?(part.id)
+              position = position.constant(part.id)
+              parts << part
+            else
+              position = nil
+              parts = [] of String
+              inner_do_break = true
+            end
           end
         end
+        do_break = true if position
       end
+    end
+
+    if !parts.empty?
+      found_position = parse_type(parts.join("::"))
     end
 
     result = false
     do_nested_version = false
     full_const = nil
     if found_position
-      if found_position.is_a?(StringLiteral)
-        version = found_position
+      if found_position.resolve.is_a?(StringLiteral)
+        version = found_position.resolve
       elsif found_position.resolve.has_constant?(:VERSION)
         full_const = "#{const.id}::VERSION"
         version = found_position.resolve.constant(:VERSION)
