@@ -50,16 +50,48 @@ describe Defined do
     DefinedTestResults::Answers[:spec_defined_a].should be_false
   end
 
+  it "if_enabled? works as expected" do
+    result = {{ system("./spec/tasks/if_enabled_true.sh").stringify }}.chomp
+    result.should eq "ENABLED"
+
+    result = {{ system("./spec/tasks/if_enabled_false.sh").stringify }}.chomp
+    result.should eq ""
+  end
+
+  it "unless_enabled? works as expected" do
+    result = {{ system("./spec/tasks/unless_enabled_true.sh").stringify }}.chomp
+    result.should eq ""
+
+    result = {{ system("./spec/tasks/unless_enabled_false.sh").stringify }}.chomp
+    result.should eq "UNLESS_ENABLED"
+  end
+
+  it "if_disabled? works as expected" do
+    result = {{ system("./spec/tasks/if_disabled_true.sh").stringify }}.chomp
+    result.should eq ""
+
+    result = {{ system("./spec/tasks/if_disabled_false.sh").stringify }}.chomp
+    result.should eq "DISABLED"
+  end
+
+  it "unless_disabled? works as expected" do
+    result = {{ system("./spec/tasks/unless_disabled_true.sh").stringify }}.chomp
+    result.should eq "UNLESS_DISABLED"
+
+    result = {{ system("./spec/tasks/unless_disabled_false.sh").stringify }}.chomp
+    result.should eq ""
+  end
+
   it "unless_enabled? works as expected" do
     DefinedTestResults::Answers[:spec_defined_b].should be_true
   end
 
   it "if_disabled? works as expected" do
-    DefinedTestResults::Answers[:spec_defined_c].should be_true
+    DefinedTestResults::Answers[:spec_defined_c].should be_false
   end
 
   it "unless_disabled? works as expected" do
-    DefinedTestResults::Answers[:spec_defined_d].should be_false
+    DefinedTestResults::Answers[:spec_defined_d].should be_true
   end
 
   it "can take class names that don't even exist" do
