@@ -1,8 +1,10 @@
-# defined
+[![Defined.cr CI](https://github.com/wyhaines/defined.cr/actions/workflows/ci.yml/badge.svg)](https://github.com/wyhaines/defined.cr/actions/workflows/ci.yml)
+[![Defined.cr CI](https://github.com/wyhaines/defined.cr/actions/workflows/ci.yml/badge.svg)](https://github.com/wyhaines/defined.cr/actions/workflows/ci.yml)
 
-![Defined.cr CI](https://img.shields.io/github/workflow/status/wyhaines/defined.cr/defined.cr%20CI?style=for-the-badge&logo=GitHub)
 [![GitHub release](https://img.shields.io/github/release/wyhaines/defined.cr.svg?style=for-the-badge)](https://github.com/wyhaines/defined.cr/releases)
 ![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/wyhaines/defined.cr/latest?style=for-the-badge)
+
+# defined.cr
 
 This shard provides a variety of macros that can be used to check, at compile time, if a
 given constant is defined, and also to conditionally compile code based on whether a

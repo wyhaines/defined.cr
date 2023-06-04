@@ -1,3 +1,5 @@
 module Defined
-  VERSION = "0.3.6"
+  {% begin %}
+  VERSION = {{ read_file("#{__DIR__}/../VERSION").chomp }}
+  {% end %}
 end
