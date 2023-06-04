@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.4.1">
+<meta name="generator" content="Crystal Docs 1.7.3">
 <meta name="crystal_docs.project_version" content="0.3.6">
 <meta name="crystal_docs.project_name" content="defined">
 
@@ -329,7 +329,7 @@ To make things more interesting, there is no way to force that MacroExpression t
 from within macro code, making it difficult to access the value. So, for instance, if there were
 the following version definition:</p>
 <pre><code class="language-crystal"><span class="k">class</span> <span class="t">Foo</span>
-  <span class="t">VERSION</span> <span class="o">=</span> {{ <span class="s">`shards version &quot;</span><span class="i">#{</span>__DIR__<span class="i">}</span><span class="s">&quot;`</span>.chomp.stringify }}
+  <span class="t">VERSION</span> <span class="o">=</span> <span class="o">{{</span> <span class="s">`shards version &quot;</span><span class="i">#{</span>__DIR__<span class="i">}</span><span class="s">&quot;`</span>.chomp.stringify }}
 <span class="k">end</span></code></pre>
 <p>Then the <code><a href="toplevel.html#if_version%3F%28const%2Ccomparison%2Cvalue%2C%26code%29-macro">if_version?</a></code> macro would not be able to access the value of <code>VERSION</code> because it
 would be a MacroExpression.</p>
@@ -343,9 +343,9 @@ So, <code><a href="toplevel.html#if_version%3F%28const%2Ccomparison%2Cvalue%2C%2
   <span class="c"># Awesome. That&#39;s a great version of Foo!</span>
 <span class="k">end</span></code></pre>
 <p>The macro will rewrite that to look something like this:</p>
-<pre><code class="language-crystal">{% <span class="k">begin</span> %}
-<span class="t">X__temp_731</span> <span class="o">=</span> {{ <span class="s">`shards version &quot;</span><span class="i">#{</span>__DIR__<span class="i">}</span><span class="s">&quot;`</span>.chomp.stringify }}
-{% <span class="k">end</span> %}
+<pre><code class="language-crystal"><span class="o">{%</span> <span class="k">begin</span> <span class="o">%}</span>
+<span class="t">X__temp_731</span> <span class="o">=</span> <span class="o">{{</span> <span class="s">`shards version &quot;</span><span class="i">#{</span>__DIR__<span class="i">}</span><span class="s">&quot;`</span>.chomp.stringify }}
+<span class="o">{%</span> <span class="k">end</span> <span class="o">%}</span>
 if_version?(<span class="s">&quot;Foo&quot;</span>, <span class="n">:&gt;</span>, <span class="s">&quot;1.0.0&quot;</span>) <span class="k">do</span>
   <span class="c"># Awesome. That&#39;s a great version of Foo!</span>
 <span class="k">end</span></code></pre>
