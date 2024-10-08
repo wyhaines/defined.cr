@@ -107,4 +107,8 @@ describe Defined do
   it "unless_version? can handle a constant that resolves back to a MacroVersion" do
     DefinedTestResults::Answers[:workaround_unless].should be_true
   end
+
+  it "dynamic creation of methods should work" do
+    onebar.should eq 7
+  end
 end

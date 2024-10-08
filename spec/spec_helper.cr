@@ -11,6 +11,18 @@ if_defined?(Zero) do
   class Three; end
 end
 
+if_defined?(One) do
+  def onebar
+    7
+  end
+end
+
+if_defined?(Zero) do
+  def onebar
+    8
+  end
+end
+
 class VerMe
   VERSION = "1.2.3"
 
